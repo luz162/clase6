@@ -22,6 +22,7 @@ class Mascota:
         self.__peso=" "
         self.__fecha_ingreso=" "
         self.__lista_medicamentos=[]
+    
         
     def verNombre(self):
         return self.__nombre
@@ -95,7 +96,7 @@ class sistemaV:
     
     #Elimina medicamento de la lista
     def eliminarMedicamento(self,historia,nombre_medicamento):
-        for mascota in self.lista_mascotas:
+        for mascota in self.__lista_mascotas:
             if mascota.verHistoria() == historia:
                 mascota.eliminar_medicamento(nombre_medicamento)
                 return True
@@ -104,7 +105,7 @@ class sistemaV:
    
 
 
-from datetime import datetime
+import datetime
 def main():
     servicio_hospitalario = sistemaV()
     # sistma=sistemaV()
@@ -129,12 +130,13 @@ def main():
                 tipo=input("Ingrese el tipo de mascota (felino o canino): ")
                 peso=int(input("Ingrese el peso de la mascota: "))
                 # aviso de ingreso de fecha incorrecta
-                fecha=input("Ingrese la fecha de ingreso (dia/mes/año): ")
-                try:
-                    fecha=datetime.datetime.strptime( "%d/%m/%Y").striptime("%d/%m/%Y")
-                except ValueError:
-                    print("Formato incorrecto.(dia/mes/año")
-                    continue
+                while True:
+                    fecha=input("Ingrese la fecha de ingreso (dia/mes/año): ")
+                    try:
+                        fecha=datetime.datetime.strptime( fecha,"%d/%m/%Y")
+                        break
+                    except ValueError:
+                        print("Formato incorrecto.(dia/mes/año)")
                 
                 nm=int(input("Ingrese cantidad de medicamentos: "))
 
@@ -157,7 +159,9 @@ def main():
                     if not medicamento_existe:    
                         lista_med.append(medicamento)
                     else:
-                        continue    
+                        continue  
+
+                   
                 
                 mas= Mascota()
                 mas.asignarNombre(nombre)
@@ -176,7 +180,7 @@ def main():
             fecha = servicio_hospitalario.verFechaIngreso(q)
             # if servicio_hospitalario.verificarExiste == True
             if fecha != None:
-                print("La fecha de ingreso de la mascota es: " + fecha)
+                print("La fecha de ingreso de la mascota es: " + fecha.strftime("%d/%m/%Y"))
             else:
                 print("La historia clínica ingresada no corresponde con ninguna mascota en el sistema.")
             
@@ -190,7 +194,7 @@ def main():
             if medicamento != None: 
                 print("Los medicamentos suministrados son: ")
                 for m in medicamento:   
-                    print(f"\n- {m.verNombre()}")
+                    print(f"\n- {m.verNombre()} (Dosis:{m.verDosis()})")
             else:
                 print("La historia clínica ingresada no corresponde con ninguna mascota en el sistema.")
 
