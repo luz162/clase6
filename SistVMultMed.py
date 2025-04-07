@@ -47,7 +47,12 @@ class Mascota:
     def asignarFecha(self,f):
         self.__fecha_ingreso=f
     def asignarLista_Medicamentos(self,n):
-        self.__lista_medicamentos = n 
+        self.__lista_medicamentos = n
+
+    # eliminar medicamento
+    def eliminar_medicamento(self,nombre_medicamento):
+        self.__lista_medicamentos=[med for  med in self.__lista_medicamentos
+            if med.verNombre() !=nombre_medicamento]   
     
 class sistemaV:
     def __init__(self):
@@ -87,7 +92,19 @@ class sistemaV:
                 self.__lista_mascotas.remove(masc)  #opcion con el pop
                 return True  #eliminado con exito
         return False 
+    
+    #Elimina medicamento de la lista
+    def eliminarMedicamento(self,historia,nombre_medicamento):
+        for mascota in self.lista_mascotas:
+            if mascota.verHistoria() == historia:
+                mascota.eliminar_medicamento(nombre_medicamento)
+                return True
+        return False     
+        
+   
 
+
+from datetime import datetime
 def main():
     servicio_hospitalario = sistemaV()
     # sistma=sistemaV()
@@ -98,7 +115,8 @@ def main():
                        \n3- Ver número de mascotas en el servicio 
                        \n4- Ver medicamentos que se están administrando
                        \n5- Eliminar mascota 
-                       \n6- Salir 
+                       \n6- Eliminar medicamento
+                       \n7- Salir 
                        \nUsted ingresó la opción: ''' ))
         if menu==1: # Ingresar una mascota 
             if servicio_hospitalario.verNumeroMascotas() >= 10:
@@ -110,18 +128,37 @@ def main():
                 nombre=input("Ingrese el nombre de la mascota: ")
                 tipo=input("Ingrese el tipo de mascota (felino o canino): ")
                 peso=int(input("Ingrese el peso de la mascota: "))
+                # aviso de ingreso de fecha incorrecta
                 fecha=input("Ingrese la fecha de ingreso (dia/mes/año): ")
+                try:
+                    fecha=datetime.datetime.strptime( "%d/%m/%Y").striptime("%d/%m/%Y")
+                except ValueError:
+                    print("Formato incorrecto.(dia/mes/año")
+                    continue
+                
                 nm=int(input("Ingrese cantidad de medicamentos: "))
+
                 lista_med=[]
 
-                for i in range(0,nm):
-                    nombre_medicamentos = input("Ingrese el nombre del medicamento: ")
-                    dosis =int(input("Ingrese la dosis: "))
+                for _ in range(nm):
+                    nombre_medicamentos = input("Ingrese el nombre del medicamento: ")        
+                    dosis = int(input("Ingrese la dosis: ")) 
                     medicamento = Medicamento()
                     medicamento.asignarNombre(nombre_medicamentos)
                     medicamento.asignarDosis(dosis)
-                    lista_med.append(medicamento)
 
+                    # verificar medicamento
+                    medicamento_existe=False
+                    for med in lista_med:
+                        if med.verNombre()==nombre_medicamentos:
+                            print("este medicamento ya existe")
+                            medicamento_existe =True
+                            break
+                    if not medicamento_existe:    
+                        lista_med.append(medicamento)
+                    else:
+                        continue    
+                
                 mas= Mascota()
                 mas.asignarNombre(nombre)
                 mas.asignarHistoria(historia)
@@ -165,8 +202,17 @@ def main():
                 print("Mascota eliminada del sistema con exito")
             else:
                 print("No se ha podido eliminar la mascota")
-        
-        elif menu==6:
+
+        elif menu==6:# eliminar medicamento
+            
+            q = int(input("Ingrese la historia clínica de la mascota: "))
+            nombre_medicamento=input("ingrese el nombre del medicamento a eliminar")
+            if servicio_hospitalario.eliminarMedicamento(q,nombre_medicamento):
+                print("medicamento eliminado")
+            else:
+                print("medicamento no existe")    
+                        
+        elif  menu==7:
             print("Usted ha salido del sistema de servicio de hospitalización...")
             break
         
